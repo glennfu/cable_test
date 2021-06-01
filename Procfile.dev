@@ -1,0 +1,7 @@
+# web: touch tmp/restart.txt && tail -f log/development.log
+web: bundle exec rails s -p 3000
+# watcher: ./bin/webpack-watcher
+# webpacker: ./bin/webpack-dev-server
+worker: bundle exec sidekiq
+# search: elasticsearch
+# search: tail -f /usr/local/var/log/elasticsearch.log
