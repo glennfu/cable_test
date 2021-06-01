@@ -9,9 +9,23 @@ export default class extends Controller {
 
   connect() {
     
-    this.outputTarget.textContent = 'Hello, Stimulus!'
+    if (this.controllerIndex == null) {
+      if (window.controllerCount != null)
+        window.controllerCount += 1
+      else
+        window.controllerCount = 1
+        
+      this.controllerIndex = window.controllerCount
+    }
+      
+    this.outputTarget.textContent = 'Hello, Stimulus! ' + this.controllerIndex
 
     this.startDebug()
+
+    this.reloadListener = (event) => { this.closeConnecion() }
+    document.addEventListener("hello:reload", this.reloadListener, false)
+
+    
 
     let cont = this;
     if (!this.testChannel || this.testChannel.consumer.connection.disconected) {
@@ -45,14 +59,22 @@ export default class extends Controller {
   
   log(string) {
     this.outputTarget.innerHTML = this.outputTarget.innerHTML + "<br>" + string
+    console.log(this.outputTarget.innerHTML + "<br>" + string, this.controllerIndex)
+  }
+  
+  closeConnecion() {
+    if (this.testChannel) {
+      this.log("Unsubscribing IntakeChannel in disconnect")
+      this.testChannel.unsubscribe()
+      // this.testChannel.consumer.connection.close()
+      this.testChannel = null
+    }
   }
 
   disconnect() {
-    // if (this.testChannel) {
-    //   console.log("Unsubscribing IntakeChannel in disconnect")
-    //   this.testChannel.unsubscribe()
-    //   this.testChannel = null
-    // }
+    this.log("disconnect()")
+    this.closeConnecion()
+    document.removeEventListener("hello:reload", this.reloadListener)
   }
 
   startDebug() {

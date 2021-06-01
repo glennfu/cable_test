@@ -20,7 +20,7 @@ class TestChannel < ApplicationCable::Channel
   private
 
     def user_has_left
-
+      stop_all_streams
     end
 
 end
